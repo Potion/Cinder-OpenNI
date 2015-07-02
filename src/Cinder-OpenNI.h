@@ -58,10 +58,10 @@ namespace OpenNI
 bool					success( nite::Status status );
 bool					success( openni::Status status );
 
-ci::AxisAlignedBox3f	toAxisAlignedBox3f( const nite::Point3f& aMin, const nite::Point3f& aMax );
-ci::Planef				toPlanef( const nite::Point3f& point, const nite::Point3f& normal );
-ci::Quatf				toQuatf( const nite::Quaternion& q );
-ci::Vec3f				toVec3f( const nite::Point3f& v );
+ci::AxisAlignedBox	toAxisAlignedBox3f( const nite::Point3f& aMin, const nite::Point3f& aMax );
+ci::Planef				toPlane( const nite::Point3f& point, const nite::Point3f& normal );
+ci::quat				toQuat( const nite::Quaternion& q );
+ci::vec3				toVec3( const nite::Point3f& v );
 
 ci::Channel8u			toChannel8u( const openni::VideoFrameRef& f );
 ci::Channel16u			toChannel16u( const openni::VideoFrameRef& f );
@@ -105,9 +105,9 @@ public:
 	openni::PixelFormat	getDepthPixelFormat() const;
 	openni::PixelFormat	getInfraredPixelFormat() const;
 
-	const ci::Vec2i&	getColorSize() const; 
-	const ci::Vec2i&	getDepthSize() const; 
-	const ci::Vec2i&	getInfraredSize() const;
+	const ci::vec2&	getColorSize() const; 
+	const ci::vec2&	getDepthSize() const; 
+	const ci::vec2&	getInfraredSize() const;
 
 	const std::string&	getUri() const;
 		
@@ -125,9 +125,9 @@ public:
 	DeviceOptions&		setDepthPixelFormat( openni::PixelFormat format );
 	DeviceOptions&		setInfraredPixelFormat( openni::PixelFormat format );
 
-	DeviceOptions&		setColorSize( const ci::Vec2i& size );
-	DeviceOptions&		setDepthSize( const ci::Vec2i& size );
-	DeviceOptions&		setInfraredSize( const ci::Vec2i& size );
+	DeviceOptions&		setColorSize( const ci::vec2& size );
+	DeviceOptions&		setDepthSize( const ci::vec2& size );
+	DeviceOptions&		setInfraredSize( const ci::vec2& size );
 
 	void				setUri( const std::string& uri );
 private:
@@ -145,9 +145,9 @@ private:
 	openni::PixelFormat	mPixelFormatDepth;
 	openni::PixelFormat	mPixelFormatInfrared;
 
-	ci::Vec2i			mSizeColor;
-	ci::Vec2i			mSizeDepth;
-	ci::Vec2i			mSizeInfrared;
+	ci::vec2			mSizeColor;
+	ci::vec2			mSizeDepth;
+	ci::vec2			mSizeInfrared;
 
 	std::string			mUri;
 };

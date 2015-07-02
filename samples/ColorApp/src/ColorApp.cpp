@@ -38,7 +38,9 @@
 * 
 */
 
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
+#include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "Cinder-OpenNI.h"
 
@@ -46,20 +48,24 @@
 * This application demonstrates how to display OpenNI's 
 * color stream.
 */
-class ColorApp : public ci::app::AppBasic 
+
+using namespace ci;
+using namespace ci::app;
+
+class ColorApp : public ci::app::App
 {
 public:
 	void						draw();
 	void						keyDown( ci::app::KeyEvent event );
-	void						prepareSettings( ci::app::AppBasic::Settings* settings );
+	void						prepareSettings( ci::app::App::Settings* settings );
 	void						setup();
 private:
 	OpenNI::DeviceRef			mDevice;
 	OpenNI::DeviceManagerRef	mDeviceManager;
 	ci::Surface8u				mSurface;
+	ci::Surface8uRef			mSurfaceRef;
 	ci::gl::TextureRef			mTexture;
 	void						onColor( openni::VideoFrameRef frame, const OpenNI::DeviceOptions& deviceOptions );
-
 	void						screenShot();
 };
 
@@ -72,10 +78,10 @@ using namespace std;
 
 void ColorApp::draw()
 {
-	gl::setViewport( getWindowBounds() );
+
 	gl::clear( Colorf::black() );
 
-	if ( mSurface ) {
+	if ( mSurfaceRef ) {
 		if ( mTexture ) {
 			mTexture->update( mSurface );
 		} else {
@@ -103,6 +109,7 @@ void ColorApp::keyDown( KeyEvent event )
 void ColorApp::onColor( openni::VideoFrameRef frame, const OpenNI::DeviceOptions& deviceOptions )
 {
 	mSurface = OpenNI::toSurface8u( frame );
+	mSurfaceRef = ci::Surface::create( mSurface );
 }
 
 void ColorApp::prepareSettings( Settings* settings )
@@ -151,4 +158,4 @@ void ColorApp::setup()
 	}
 }
 
-CINDER_APP_BASIC( ColorApp, RendererGl )
+CINDER_APP( ColorApp, RendererGl )

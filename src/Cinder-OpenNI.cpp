@@ -76,24 +76,24 @@ bool success( openni::Status status )
 	return true;
 }
 
-AxisAlignedBox3f toAxisAlignedBox3f( const nite::Point3f& aMin, const nite::Point3f& aMax )
+ci::AxisAlignedBox toAxisAlignedBox3f( const nite::Point3f& aMin, const nite::Point3f& aMax )
 {
-	return AxisAlignedBox3f( toVec3f( aMin ), toVec3f( aMax ) );
+	return AxisAlignedBox( toVec3( aMin ), toVec3( aMax ) );
 }
 
 Planef toPlanef( const nite::Point3f& point, const nite::Point3f& normal )
 {
-	return Planef( toVec3f( point ), toVec3f( normal ) );
+	return Planef( toVec3( point ), toVec3( normal ) );
 }
 
-Quatf toQuatf( const nite::Quaternion& q )
+ci::quat toQuat( const nite::Quaternion& q )
 {
-	return Quatf( q.w, q.x, q.y, q.z );
+	return ci::quat( q.w, q.x, q.y, q.z );
 }
 
-Vec3f toVec3f( const nite::Point3f& v )
+ci::vec3 toVec3( const nite::Point3f& v )
 {
-	return Vec3f( v.x, v.y, v.z );
+	return vec3( v.x, v.y, v.z );
 }
 
 Channel8u toChannel8u( const openni::VideoFrameRef& f )
@@ -134,9 +134,9 @@ DeviceOptions::DeviceOptions()
 	setDepthPixelFormat( openni::PixelFormat::PIXEL_FORMAT_DEPTH_100_UM );
 	setInfraredPixelFormat( openni::PixelFormat::PIXEL_FORMAT_GRAY16 );
 
-	setColorSize( Vec2i( 640, 480 ) );
-	setDepthSize( Vec2i( 320, 240 ) );
-	setInfraredSize( Vec2i( 320, 240 ) );
+	setColorSize( ci::vec2( 640, 480 ) );
+	setDepthSize( ci::vec2( 320, 240 ) );
+	setInfraredSize( ci::vec2( 320, 240 ) );
 
 	setUri( "" );
 }
@@ -196,17 +196,17 @@ openni::PixelFormat	DeviceOptions::getInfraredPixelFormat() const
 	return mPixelFormatInfrared;
 }
 
-const Vec2i& DeviceOptions::getColorSize() const
+const ci::vec2& DeviceOptions::getColorSize() const
 {
 	return mSizeColor;
 }
 
-const Vec2i& DeviceOptions::getDepthSize() const
+const ci::vec2& DeviceOptions::getDepthSize() const
 {
 	return mSizeDepth;
 }
 
-const Vec2i& DeviceOptions::getInfraredSize() const
+const ci::vec2& DeviceOptions::getInfraredSize() const
 {
 	return mSizeInfrared;
 }
@@ -282,19 +282,19 @@ DeviceOptions& DeviceOptions::setInfraredPixelFormat( openni::PixelFormat format
 	return *this;
 }
 
-DeviceOptions& DeviceOptions::setColorSize( const Vec2i& size )
+DeviceOptions& DeviceOptions::setColorSize( const vec2& size )
 {
 	mSizeColor = size;
 	return *this;
 }
 
-DeviceOptions& DeviceOptions::setDepthSize( const Vec2i& size )
+DeviceOptions& DeviceOptions::setDepthSize( const vec2& size )
 {
 	mSizeDepth = size;
 	return *this;
 }
 
-DeviceOptions& DeviceOptions::setInfraredSize( const Vec2i& size )
+DeviceOptions& DeviceOptions::setInfraredSize( const vec2& size )
 {
 	mSizeInfrared = size;
 	return *this;
