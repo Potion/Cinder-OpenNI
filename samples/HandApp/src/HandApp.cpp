@@ -38,19 +38,21 @@
 * 
 */
 
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
+#include "cinder/gl/gl.h"
 #include "cinder/Camera.h"
 #include "Cinder-OpenNI.h"
 
 /* 
 * This application demonstrates how to display NiTE hands.
 */
-class HandApp : public ci::app::AppBasic 
+class HandApp : public ci::app::App
 {
 public:
 	void						draw();
 	void						keyDown( ci::app::KeyEvent event );
-	void						prepareSettings( ci::app::AppBasic::Settings* settings );
+	void						prepareSettings( ci::app::App::Settings* settings );
 	void						setup();
 private:
 	ci::CameraPersp				mCamera;
@@ -58,7 +60,7 @@ private:
 	ci::Channel16u				mChannel;
 	OpenNI::DeviceRef			mDevice;
 	OpenNI::DeviceManagerRef	mDeviceManager;
-	std::vector<ci::Vec3f>		mHands;
+	std::vector<ci::vec3>		mHands;
 	ci::gl::TextureRef			mTexture;
 	void						onHand( nite::HandTrackerFrameRef frame, const OpenNI::DeviceOptions& deviceOptions );
 
@@ -75,11 +77,11 @@ using namespace std;
 
 void HandApp::draw()
 {
-	gl::setViewport( getWindowBounds() );
+
 	gl::clear();
 	gl::setMatricesWindow( getWindowSize() );
 	
-	if ( mChannel ) {
+	if ( mChannel.getData() ) {
 		if ( mTexture ) {
 			mTexture->update( Surface32f( mChannel ) );
 		} else {
@@ -89,11 +91,11 @@ void HandApp::draw()
 	}
 
 	gl::setMatrices( mCamera );
-	for ( vector<Vec3f>::const_iterator iter = mHands.begin(); iter != mHands.end(); ++iter ) {
+	for ( vector<vec3>::const_iterator iter = mHands.begin(); iter != mHands.end(); ++iter ) {
 		gl::pushMatrices();
 		gl::translate( *iter );
 		for ( float i = 0.0f; i < 50.0f; i += 5.0f ) {
-			gl::drawStrokedCircle( Vec2f::zero(), 10.0f + i, 32 );
+			gl::drawStrokedCircle( vec2(), 10.0f + i, 32 );
 		}
 		gl::popMatrices();
 	}
@@ -133,7 +135,7 @@ void HandApp::onHand( nite::HandTrackerFrameRef frame, const OpenNI::DeviceOptio
 		if ( iter->isLost() ) {
 			mDevice->getHandTracker().stopHandTracking( iter->getId() );
 		} else if ( iter->isTracking() ) {
-			Vec3f position	= OpenNI::toVec3f( iter->getPosition() );
+			vec3 position	= OpenNI::toVec3( iter->getPosition() );
 			position.x		= -position.x;
 			mHands.push_back( position );
 		}
@@ -155,11 +157,11 @@ void HandApp::setup()
 {
 	gl::color( ColorAf::white() );
 
-	mDeviceManager		= OpenNI::DeviceManager::create();
+	mDeviceManager = OpenNI::DeviceManager::create();
 
-	Vec2i windowSize	= toPixels( getWindowSize() );
+	vec2 windowSize	= toPixels( getWindowSize() );
 	mCamera				= CameraPersp( windowSize.x, windowSize.y, 45.0f, 1.0f, 1000.0f );
-	mCamera.lookAt( Vec3f::zero(), Vec3f::zAxis(), Vec3f::yAxis() );
+	mCamera.lookAt( vec3( 0, 0, 0 ), vec3( 0 ) );
 
 	try {
 		mDevice = mDeviceManager->createDevice( OpenNI::DeviceOptions().enableHandTracking().enableInfrared() );
@@ -178,4 +180,4 @@ void HandApp::setup()
 	mDevice->getHandTracker().startGestureDetection( nite::GestureType::GESTURE_WAVE );
 }
 
-CINDER_APP_BASIC( HandApp, RendererGl )
+CINDER_APP( HandApp, RendererGl )

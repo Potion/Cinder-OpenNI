@@ -38,7 +38,9 @@
 * 
 */
 
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
+#include "cinder/gl/gl.h"
 #include "cinder/Camera.h"
 #include "cinder/Channel.h"
 #include "cinder/gl/Texture.h"
@@ -47,13 +49,13 @@
 /* 
  * This application demonstrates how to display NiTE users.
  */
-class UserApp : public ci::app::AppBasic 
+class UserApp : public ci::app::App
 {
 
 public:
 	void						draw();
 	void						keyDown( ci::app::KeyEvent event );
-	void						prepareSettings( ci::app::AppBasic::Settings* settings );
+	void						prepareSettings( ci::app::App::Settings* settings );
 	void						setup();
 private:
 	struct Bone
@@ -88,12 +90,12 @@ using namespace std;
 
 void UserApp::draw()
 {
-	gl::setViewport( getWindowBounds() );
+
 	gl::clear( Colorf::black() );
 	gl::setMatricesWindow( getWindowSize() );
 
 	gl::color( Colorf::white() );
-	if ( mChannel ) {
+	if ( mChannel.getData() ) {
 		if ( mTexture ) {
 			mTexture->update( Channel32f( mChannel ) );
 		} else {
@@ -112,8 +114,8 @@ void UserApp::draw()
 				const nite::SkeletonJoint& joint0 = skeleton.getJoint( iter->mJointA );
 				const nite::SkeletonJoint& joint1 = skeleton.getJoint( iter->mJointB );
 
-				Vec3f v0 = OpenNI::toVec3f( joint0.getPosition() );
-				Vec3f v1 = OpenNI::toVec3f( joint1.getPosition() );
+				vec3 v0 = OpenNI::toVec3( joint0.getPosition() );
+				vec3 v1 = OpenNI::toVec3( joint1.getPosition() );
 				v0.x = -v0.x;
 				v1.x = -v1.x;
 
@@ -183,7 +185,7 @@ void UserApp::setup()
 	mBones.push_back( Bone( nite::JOINT_RIGHT_KNEE,		nite::JOINT_RIGHT_FOOT ) );
 
 	mCamera = CameraPersp( getWindowWidth(), getWindowHeight(), 45.0f, 1.0f, 5000.0f );
-	mCamera.lookAt( Vec3f::zero(), Vec3f::zAxis(), Vec3f::yAxis() );
+	mCamera.lookAt( vec3(), vec3() );
 
 	mDeviceManager = OpenNI::DeviceManager::create();
 	try {
@@ -194,9 +196,12 @@ void UserApp::setup()
 		return;
 	}
 
-	mDevice->getUserTracker().setSkeletonSmoothingFactor( 0.5f );
-	mDevice->connectUserEventHandler( &UserApp::onUser, this );
-	mDevice->start();
+	if ( mDevice ) {
+	
+		mDevice->getUserTracker().setSkeletonSmoothingFactor( 0.5f );
+		mDevice->connectUserEventHandler( &UserApp::onUser, this );
+		mDevice->start();
+	}
 }
 
-CINDER_APP_BASIC( UserApp, RendererGl )
+CINDER_APP( UserApp, RendererGl )

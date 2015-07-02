@@ -63,7 +63,6 @@ private:
 	OpenNI::DeviceRef			mDevice;
 	OpenNI::DeviceManagerRef	mDeviceManager;
 	ci::Surface8u				mSurface;
-	ci::Surface8uRef			mSurfaceRef;
 	ci::gl::TextureRef			mTexture;
 	void						onColor( openni::VideoFrameRef frame, const OpenNI::DeviceOptions& deviceOptions );
 	void						screenShot();
@@ -81,7 +80,7 @@ void ColorApp::draw()
 
 	gl::clear( Colorf::black() );
 
-	if ( mSurfaceRef ) {
+	if ( mSurface.getData() ) {
 		if ( mTexture ) {
 			mTexture->update( mSurface );
 		} else {
@@ -109,7 +108,6 @@ void ColorApp::keyDown( KeyEvent event )
 void ColorApp::onColor( openni::VideoFrameRef frame, const OpenNI::DeviceOptions& deviceOptions )
 {
 	mSurface = OpenNI::toSurface8u( frame );
-	mSurfaceRef = ci::Surface::create( mSurface );
 }
 
 void ColorApp::prepareSettings( Settings* settings )

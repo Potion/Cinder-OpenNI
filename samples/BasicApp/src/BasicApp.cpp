@@ -38,7 +38,9 @@
 * 
 */
 
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
+#include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "Cinder-OpenNI.h"
 
@@ -46,12 +48,12 @@
 * This application demonstrates how to display OpenNI's 
 * depth stream.
 */
-class BasicApp : public ci::app::AppBasic 
+class BasicApp : public ci::app::App
 {
 public:
 	void						draw();
 	void						keyDown( ci::app::KeyEvent event );
-	void						prepareSettings( ci::app::AppBasic::Settings* settings );
+	void						prepareSettings( ci::app::App::Settings* settings );
 	void						setup();
 private:
 	ci::Channel16u				mChannel;
@@ -59,7 +61,6 @@ private:
 	OpenNI::DeviceManagerRef	mDeviceManager;
 	ci::gl::TextureRef			mTexture;
 	void						onDepth( openni::VideoFrameRef frame, const OpenNI::DeviceOptions& deviceOptions );
-
 	void						screenShot();
 };
 
@@ -72,10 +73,9 @@ using namespace std;
 
 void BasicApp::draw()
 {
-	gl::setViewport( getWindowBounds() );
 	gl::clear( Colorf::black() );
 
-	if ( mChannel ) {
+	if ( mChannel.getData() ) {
 		if ( mTexture ) {
 			mTexture->update( Channel32f( mChannel ) );
 		} else {
@@ -121,7 +121,7 @@ void BasicApp::setup()
 	// The device manager automatically initializes OpenNI and NiTE.
 	// It's a good idea to check that initialization is complete
 	// before accessing devices.
-	mDeviceManager		= OpenNI::DeviceManager::create();
+	mDeviceManager = OpenNI::DeviceManager::create();
 
 	if ( mDeviceManager->isInitialized() ) {
 
@@ -144,4 +144,4 @@ void BasicApp::setup()
 	}
 }
 
-CINDER_APP_BASIC( BasicApp, RendererGl )
+CINDER_APP( BasicApp, RendererGl )
