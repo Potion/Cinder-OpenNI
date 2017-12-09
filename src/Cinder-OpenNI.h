@@ -49,7 +49,7 @@
 #include "cinder/Surface.h"
 #include "cinder/Vector.h"
 #include "cinder/Utilities.h"
-#include "Nite.h"
+#include "NiTE/NiTE.h"
 #include "OpenNI.h"
 #include <mutex>
 
@@ -235,6 +235,8 @@ public:
 	void						start();
 	void						stop();
 
+	void setImageRegistrationMode( openni::ImageRegistrationMode registrationMode );
+	
 	const openni::Device&		getDevice() const;
 	const openni::DeviceInfo&	getDeviceInfo() const;
 	const DeviceOptions&		getDeviceOptions() const;

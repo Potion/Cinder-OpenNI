@@ -304,6 +304,10 @@ void DeviceOptions::setUri( const std::string& uri )
 {
 	mUri = uri;
 }
+	
+	
+
+	
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -342,10 +346,16 @@ UserTrackerListener::UserTrackerListener( UserTrackerListener::EventHandler even
 void UserTrackerListener::onNewFrame( nite::UserTracker& tracker )
 {
 	lock_guard<recursive_mutex> lock( mMutex );
-	if ( !mNewFrame ) {
-		success( tracker.readFrame( &mFrame ) );
-		mNewFrame = true;
-	}
+	
+//	try {
+	
+		if ( !mNewFrame ) {
+			success( tracker.readFrame( &mFrame ) );
+			mNewFrame = true;
+		}
+//	} catch ( std::exception& exc ) {
+//		std::cout << "Caught exception "  << exc.what()  << std::endl;
+//	}
 }
 
 void UserTrackerListener::update()
@@ -506,6 +516,11 @@ void Device::stop()
 	if ( mStreamInfrared.isValid() ) {
 		mStreamInfrared.stop();
 	}
+}
+	
+void Device::setImageRegistrationMode( openni::ImageRegistrationMode registrationMode )
+{
+	mDevice.setImageRegistrationMode(registrationMode);
 }
 	
 const openni::Device& Device::getDevice() const
