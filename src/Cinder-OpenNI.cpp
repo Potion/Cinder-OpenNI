@@ -335,6 +335,8 @@ void HandTrackerListener::update()
 	if ( mNewFrame && mFrame.isValid() ) {
 		mEventHandler( mFrame, mDeviceOptions );
 		mNewFrame = false;
+		mFrame.release();
+		
 	}
 }
 	
@@ -347,11 +349,23 @@ void UserTrackerListener::onNewFrame( nite::UserTracker& tracker )
 {
 	lock_guard<recursive_mutex> lock( mMutex );
 	
+	//std::cout << "New user frame " << std::endl;
+	
+	
 //	try {
 	
 		if ( !mNewFrame ) {
-			success( tracker.readFrame( &mFrame ) );
-			mNewFrame = true;
+			bool status = success( tracker.readFrame( &mFrame ) );
+			
+			if( mFrame.isValid() ) {
+				//mFrameCopy.release();
+				mFrameCopy = nite::UserTrackerFrameRef( mFrame );
+				mNewFrame = true;
+			}
+			
+			if( !status )
+				std::cout << "status "  << status << std::endl;
+			
 		}
 //	} catch ( std::exception& exc ) {
 //		std::cout << "Caught exception "  << exc.what()  << std::endl;
@@ -360,8 +374,8 @@ void UserTrackerListener::onNewFrame( nite::UserTracker& tracker )
 
 void UserTrackerListener::update()
 {
-	if ( mNewFrame && mFrame.isValid() ) {
-		mEventHandler( mFrame, mDeviceOptions );
+	if ( mNewFrame && mFrameCopy.isValid() ) {
+		mEventHandler( mFrameCopy, mDeviceOptions );
 		mNewFrame = false;
 	}
 }

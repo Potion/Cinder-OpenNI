@@ -197,7 +197,8 @@ private:
 
 	EventHandler				mEventHandler;
 	nite::UserTrackerFrameRef	mFrame;
-
+	nite::UserTrackerFrameRef	mFrameCopy;
+	
 	void						update();
 
 	friend class				Device;

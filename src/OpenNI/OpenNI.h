@@ -532,7 +532,10 @@ public:
 	*/
 	inline int getHeight() const
 	{
-		return m_pFrame->height;
+		if( m_pFrame )
+			return m_pFrame->height;
+		else
+			return -999;
 	}
 
 	/**

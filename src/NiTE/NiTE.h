@@ -610,10 +610,20 @@ public:
 	*/
 	void release()
 	{
-		if (m_pFrame != NULL)
+		if (m_pFrame != NULL &&  m_userTrackerHandle != NULL )
 		{
-			niteUserTrackerFrameRelease(m_userTrackerHandle, m_pFrame);
+#pragma mark danger!!!
+			
+			try {
+				//std::cout << "m_userTrackerHandle--> " << *m_userTrackerHandle << std::endl;
+				//std::cout << "release!\n" << std::endl;
+				NiteStatus status = niteUserTrackerFrameRelease(m_userTrackerHandle, m_pFrame);
+				
+			} catch ( std::exception& exc ) {
+				std::cout << "Nite release exception--> " << exc.what() << std::endl;
+			}
 		}
+		
 		m_pFrame = NULL;
 		m_userTrackerHandle = NULL;
 	}
@@ -704,7 +714,8 @@ private:
 
 	void setReference(NiteUserTrackerHandle userTrackerHandle, NiteUserTrackerFrame* pFrame)
 	{
-		release();
+		//TODO: make sure this isn't leaking
+		//release();
 		m_userTrackerHandle = userTrackerHandle;
 		m_pFrame = pFrame;
 		m_depthFrame._setFrame(pFrame->pDepthFrame);
